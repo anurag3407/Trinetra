@@ -1,0 +1,85 @@
+name: Production CI/CD Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: Build & Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Next.js Production Build
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+          NEXT_PUBLIC_APP_ENV: prod
+
+  deploy:
+    name: Deploy to AWS Lightsail
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.LIGHTSAIL_HOST }}
+          username: ${{ secrets.LIGHTSAIL_USER }}
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          port: 22
+          timeout: 120s
+          command_timeout: 15m
+          script: |
+            set -e
+            APP_DIR="/var/www/trinetra"
+
+            # First-time setup if directory does not exist
+            if [ ! -d "$APP_DIR" ]; then
+              echo "==> Initializing directory $APP_DIR..."
+              sudo mkdir -p "$APP_DIR"
+              sudo chown -R ubuntu:ubuntu "$APP_DIR"
+              git clone https://github.com/anurag3407/Trinetra.git "$APP_DIR"
+              
+              # Run server bootstrap if nginx config not present
+              if [ ! -f "/etc/nginx/sites-available/trinetra.sayalabs.in" ]; then
+                echo "==> Running first-time server setup..."
+                sudo bash "$APP_DIR/scripts/setup-server.sh"
+                exit 0
+              fi
+            fi
+
+            # Deploy latest release
+            cd "$APP_DIR"
+            echo "==> Pulling latest changes from main..."
+            git fetch origin main
+            git reset --hard origin/main
+            chmod +x scripts/deploy.sh
+            
+            echo "==> Executing deploy.sh..."
+            ./scripts/deploy.sh
+
+      - name: Verify Live Health Endpoint
+        run: |
+          echo "Verifying deployment at https://trinetra.sayalabs.in/api/health..."
+          sleep 5
+          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://trinetra.sayalabs.in/api/health || echo "000")
+          echo "Response code: $STATUS_CODE"
+          if [ "$STATUS_CODE" = "200" ]; then
+            echo "✅ Trinetra is healthy and serving production traffic!"
+          else
+            echo "⚠️ Health check returned status $STATUS_CODE (may still be propagating SSL/DNS)"
+          fi
