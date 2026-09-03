@@ -30,18 +30,21 @@ export default function FaqAccordion() {
   ];
 
   return (
-    <section className="py-20 px-4 sm:px-6 bg-[#F0F0F0] border-b-4 border-[#121212]">
-      <div className="max-w-4xl mx-auto space-y-10">
-        <div className="space-y-3 text-center">
-          <span className="bg-[#1040C0] text-white text-xs font-black px-2.5 py-1 uppercase tracking-widest">
+    <section className="py-24 sm:py-32 lg:py-36 px-4 sm:px-6 lg:px-8 bg-[#F0F0F0] border-b-4 border-[#121212]">
+      <div className="max-w-4xl mx-auto space-y-16">
+        <div className="space-y-4 text-center">
+          <span className="bg-[#1040C0] text-white text-xs font-black px-3 py-1 uppercase tracking-widest">
             FREQUENTLY ASKED QUESTIONS
           </span>
-          <h2 className="font-black text-4xl sm:text-6xl uppercase tracking-tighter text-[#121212] leading-[0.9]">
+          <h2 className="font-black text-4xl sm:text-6xl lg:text-7xl uppercase tracking-tighter text-[#121212] leading-[0.92]">
             OPERATIONAL CLARITY
           </h2>
+          <p className="font-medium text-lg text-gray-700 max-w-xl mx-auto">
+            Everything you need to know about deployment, legal compliance, and technological architecture.
+          </p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-5">
           {faqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
             return (
@@ -51,18 +54,20 @@ export default function FaqAccordion() {
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : idx)}
-                  className={`w-full text-left p-5 flex items-center justify-between font-black text-lg sm:text-xl uppercase tracking-tight transition-colors ${
+                  className={`w-full text-left p-6 sm:p-7 flex items-center justify-between font-black text-lg sm:text-2xl uppercase tracking-tight transition-colors ${
                     isOpen ? "bg-[#D02020] text-white" : "bg-white text-[#121212] hover:bg-gray-100"
                   }`}
                 >
-                  <span>{faq.q}</span>
+                  <span className="pr-4">{faq.q}</span>
                   <ChevronDown
-                    className={`w-6 h-6 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                    className={`w-6 h-6 transition-transform duration-200 shrink-0 ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
                   />
                 </button>
 
                 {isOpen && (
-                  <div className="p-6 bg-[#FFF9C4] text-[#121212] border-t-4 border-[#121212] font-medium text-base sm:text-lg leading-relaxed">
+                  <div className="p-8 sm:p-10 bg-[#FFF9C4] text-[#121212] border-t-4 border-[#121212] font-medium text-base sm:text-lg leading-relaxed">
                     {faq.a}
                   </div>
                 )}

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Shield, Radio, FileText, Smartphone, Database, ChevronDown, User } from "lucide-react";
+import { Shield, Radio, FileText, Smartphone, Database, ChevronDown, User, Info } from "lucide-react";
 import EnvironmentBadge from "./EnvironmentBadge";
 
 export default function AppHeader() {
@@ -112,6 +112,20 @@ export default function AppHeader() {
             <div className="flex items-center gap-1.5">
               <Database className="w-3.5 h-3.5" />
               <span>Case Vault</span>
+            </div>
+          </Link>
+
+          <Link
+            href="/about"
+            className={`px-3.5 py-1.5 border-2 border-[#121212] font-bold text-xs uppercase tracking-wider transition-all ${
+              pathname === "/about"
+                ? "bg-[#F0C020] text-[#121212] shadow-[3px_3px_0px_0px_#121212]"
+                : "bg-white text-[#121212] hover:bg-gray-100 shadow-[2px_2px_0px_0px_#121212]"
+            }`}
+          >
+            <div className="flex items-center gap-1.5">
+              <Info className="w-3.5 h-3.5" />
+              <span>About & Specs</span>
             </div>
           </Link>
         </nav>
