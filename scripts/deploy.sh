@@ -86,10 +86,12 @@ done
 
 # 6. Validate & Reload Nginx if present on host
 echo "==> [6/6] Verifying and reloading Nginx..."
-if [ -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ] && [ -f "nginx/${DOMAIN}.conf" ]; then
-  echo "    Syncing latest Nginx SSL configuration for ${DOMAIN}..."
-  sudo cp "nginx/${DOMAIN}.conf" "/etc/nginx/sites-available/${DOMAIN}"
-  sudo ln -sf "/etc/nginx/sites-available/${DOMAIN}" "/etc/nginx/sites-enabled/${DOMAIN}"
+if [ -f "${APP_DIR}/nginx/${DOMAIN}.conf" ]; then
+  if sudo test -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem"; then
+    echo "    Syncing latest Nginx SSL configuration for ${DOMAIN}..."
+    sudo cp "${APP_DIR}/nginx/${DOMAIN}.conf" "/etc/nginx/sites-available/${DOMAIN}"
+    sudo ln -sf "/etc/nginx/sites-available/${DOMAIN}" "/etc/nginx/sites-enabled/${DOMAIN}"
+  fi
 fi
 
 if command -v nginx >/dev/null 2>&1; then
@@ -98,6 +100,7 @@ if command -v nginx >/dev/null 2>&1; then
     echo "    Nginx reloaded successfully (Zero-Downtime Cutover)!"
   else
     echo "!! WARNING: Nginx configuration test failed. Keeping existing Nginx worker processes." >&2
+    exit 1
   fi
 else
   echo "    Nginx not installed directly in PATH; skipped local reload."
@@ -116,4 +119,4 @@ echo "TRINETRA DEPLOYMENT COMPLETE at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 echo "Public Endpoint: https://${DOMAIN}"
 echo "Internal Port:   http://127.0.0.1:${APP_PORT}"
 echo "=================================================================="
-EOF && chmod +x /Users/jarvis/Trinetra/scripts/deploy.sh
+exit 0

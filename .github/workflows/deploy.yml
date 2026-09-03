@@ -54,7 +54,6 @@ jobs:
               sudo chown -R ubuntu:ubuntu "$APP_DIR"
               git clone https://github.com/anurag3407/Trinetra.git "$APP_DIR"
               
-              # Run server bootstrap if nginx config not present
               if [ ! -f "/etc/nginx/sites-available/trinetra.sayalabs.in" ]; then
                 echo "==> Running first-time server setup..."
                 sudo bash "$APP_DIR/scripts/setup-server.sh"
@@ -68,18 +67,28 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             chmod +x scripts/deploy.sh
+
+            # Sync Nginx configuration if SSL certificate is ready
+            if sudo test -f "/etc/letsencrypt/live/trinetra.sayalabs.in/fullchain.pem"; then
+              echo "==> Updating Nginx site config for trinetra.sayalabs.in..."
+              sudo cp "$APP_DIR/nginx/trinetra.sayalabs.in.conf" /etc/nginx/sites-available/trinetra.sayalabs.in
+              sudo ln -sf /etc/nginx/sites-available/trinetra.sayalabs.in /etc/nginx/sites-enabled/trinetra.sayalabs.in
+            fi
             
             echo "==> Executing deploy.sh..."
             ./scripts/deploy.sh
 
       - name: Verify Live Health Endpoint
         run: |
-          echo "Verifying deployment at https://trinetra.sayalabs.in/api/health..."
-          sleep 5
-          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://trinetra.sayalabs.in/api/health || echo "000")
-          echo "Response code: $STATUS_CODE"
-          if [ "$STATUS_CODE" = "200" ]; then
-            echo "✅ Trinetra is healthy and serving production traffic!"
-          else
-            echo "⚠️ Health check returned status $STATUS_CODE (may still be propagating SSL/DNS)"
-          fi
+          echo "Probing https://trinetra.sayalabs.in/api/health..."
+          for i in {1..10}; do
+            STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://trinetra.sayalabs.in/api/health || echo "000")
+            echo "Attempt $i: HTTP Status $STATUS_CODE"
+            if [ "$STATUS_CODE" = "200" ]; then
+              echo "✅ Trinetra is healthy and serving production traffic!"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "⚠️ Health probe did not return 200 within timeout."
+          exit 1
