@@ -14,9 +14,19 @@ cd "${APP_DIR}"
 APP_PORT="${APP_PORT:-3010}"
 HEALTH_URL="http://127.0.0.1:${APP_PORT}/api/health"
 MAX_WAIT_SECONDS=60
+DOMAIN="trinetra.sayalabs.in"
 
 echo "==> [1/6] Starting Trinetra deployment at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 echo "    Directory: ${APP_DIR}"
+
+# Determine Docker Compose command
+if docker info >/dev/null 2>&1; then
+  DC="docker compose"
+elif sudo -n docker info >/dev/null 2>&1 || sudo docker info >/dev/null 2>&1; then
+  DC="sudo docker compose"
+else
+  DC="docker compose"
+fi
 
 # 1. Pull latest code if running from git checkout
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
@@ -44,11 +54,11 @@ fi
 
 # 3. Build Docker container image
 echo "==> [3/6] Building production Docker image (Next.js standalone)..."
-docker compose build --pull trinetra-web
+$DC build --pull trinetra-web
 
 # 4. Restart container
 echo "==> [4/6] Starting container on 127.0.0.1:${APP_PORT}..."
-docker compose up -d --remove-orphans trinetra-web
+$DC up -d --remove-orphans trinetra-web
 
 # 5. Readiness health check
 echo "==> [5/6] Probing application health at ${HEALTH_URL}..."
@@ -67,7 +77,7 @@ while true; do
   if [ "${ELAPSED}" -ge "${MAX_WAIT_SECONDS}" ]; then
     echo "!! ERROR: Container failed health probe within ${MAX_WAIT_SECONDS}s!" >&2
     echo "!! Inspecting container logs:" >&2
-    docker compose logs --tail=50 trinetra-web >&2
+    $DC logs --tail=50 trinetra-web >&2
     exit 1
   fi
 
@@ -76,6 +86,12 @@ done
 
 # 6. Validate & Reload Nginx if present on host
 echo "==> [6/6] Verifying and reloading Nginx..."
+if [ -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ] && [ -f "nginx/${DOMAIN}.conf" ]; then
+  echo "    Syncing latest Nginx SSL configuration for ${DOMAIN}..."
+  sudo cp "nginx/${DOMAIN}.conf" "/etc/nginx/sites-available/${DOMAIN}"
+  sudo ln -sf "/etc/nginx/sites-available/${DOMAIN}" "/etc/nginx/sites-enabled/${DOMAIN}"
+fi
+
 if command -v nginx >/dev/null 2>&1; then
   if sudo nginx -t; then
     sudo systemctl reload nginx 2>/dev/null || sudo nginx -s reload
@@ -89,11 +105,15 @@ fi
 
 # Cleanup dangling images
 echo "==> Cleaning up dangling Docker images..."
-docker image prune -f >/dev/null 2>&1 || true
+if docker info >/dev/null 2>&1; then
+  docker image prune -f >/dev/null 2>&1 || true
+else
+  sudo docker image prune -f >/dev/null 2>&1 || true
+fi
 
 echo "=================================================================="
 echo "TRINETRA DEPLOYMENT COMPLETE at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-echo "Public Endpoint: https://trinetra.sayalabs.in"
+echo "Public Endpoint: https://${DOMAIN}"
 echo "Internal Port:   http://127.0.0.1:${APP_PORT}"
 echo "=================================================================="
 EOF && chmod +x /Users/jarvis/Trinetra/scripts/deploy.sh
