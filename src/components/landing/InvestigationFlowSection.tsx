@@ -159,25 +159,26 @@ export default function InvestigationFlowSection() {
       gsap.from(".flow-header-animate", {
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top 80%",
+          start: "top 85%",
         },
-        y: 35,
+        y: 25,
         opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
+        duration: 0.6,
+        stagger: 0.1,
         ease: "power3.out",
       });
 
       gsap.from(".flow-step-card", {
         scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top 75%",
+          trigger: sectionRef.current,
+          start: "top 80%",
         },
-        y: 30,
+        y: 20,
         opacity: 0,
-        duration: 0.6,
-        stagger: 0.1,
+        duration: 0.5,
+        stagger: 0.08,
         ease: "power2.out",
+        clearProps: "all",
       });
     }, sectionRef);
 
@@ -188,15 +189,15 @@ export default function InvestigationFlowSection() {
     <section
       id="flows"
       ref={sectionRef}
-      className="py-24 sm:py-32 lg:py-36 px-4 sm:px-6 lg:px-8 bg-white border-b-4 border-[#121212] relative overflow-hidden"
+      className="py-14 sm:py-18 lg:py-20 px-4 sm:px-6 lg:px-8 bg-white border-b-4 border-[#121212] relative overflow-hidden"
     >
       {/* Background Subtle Tech Accents */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#F0F0F0] rounded-full blur-3xl opacity-60 -z-10 pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#FFF9C4] rounded-full blur-3xl opacity-50 -z-10 pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto space-y-16">
-        {/* Section Header with generous negative space */}
-        <div className="max-w-3xl space-y-5">
+      <div className="max-w-7xl mx-auto space-y-8 sm:space-y-10">
+        {/* Section Header with balanced spacing */}
+        <div className="max-w-3xl space-y-3 sm:space-y-4">
           <div className="flex items-center gap-2.5 flow-header-animate">
             <span className="w-3.5 h-3.5 rounded-full bg-[#D02020] border-2 border-black" />
             <span className="w-3.5 h-3.5 bg-[#1040C0] border-2 border-black" />
@@ -206,11 +207,11 @@ export default function InvestigationFlowSection() {
             </span>
           </div>
 
-          <h2 className="flow-header-animate font-black text-4xl sm:text-6xl lg:text-7xl uppercase tracking-tighter text-[#121212] leading-[0.92]">
+          <h2 className="flow-header-animate font-black text-4xl sm:text-5xl lg:text-6xl uppercase tracking-tighter text-[#121212] leading-[0.95]">
             HOW TRINETRA TRACES & FREEZES IN <span className="text-[#D02020]">UNDER 3s</span>
           </h2>
 
-          <p className="flow-header-animate font-medium text-lg sm:text-xl text-gray-700 leading-relaxed">
+          <p className="flow-header-animate font-medium text-base sm:text-lg text-gray-700 leading-relaxed">
             Follow the automated lifecycle from the instant a victim reports stolen funds to the
             moment a court-admissible Section 94 BNSS debit freeze order arrives at the exchange.
           </p>

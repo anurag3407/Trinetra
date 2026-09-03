@@ -205,25 +205,26 @@ export default function FeaturesGrid() {
       gsap.from(".feature-grid-header", {
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top 80%",
+          start: "top 85%",
         },
-        y: 35,
+        y: 25,
         opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
+        duration: 0.6,
+        stagger: 0.1,
         ease: "power3.out",
       });
 
       gsap.from(".feature-bento-card", {
         scrollTrigger: {
-          trigger: ".feature-bento-container",
-          start: "top 75%",
+          trigger: sectionRef.current,
+          start: "top 80%",
         },
-        y: 30,
+        y: 20,
         opacity: 0,
-        duration: 0.7,
-        stagger: 0.08,
+        duration: 0.5,
+        stagger: 0.05,
         ease: "power2.out",
+        clearProps: "all",
       });
     }, sectionRef);
 
@@ -234,11 +235,11 @@ export default function FeaturesGrid() {
     <section
       id="features"
       ref={sectionRef}
-      className="py-24 sm:py-32 lg:py-36 px-4 sm:px-6 lg:px-8 bg-[#F0F0F0] border-b-4 border-[#121212]"
+      className="py-14 sm:py-18 lg:py-20 px-4 sm:px-6 lg:px-8 bg-[#F0F0F0] border-b-4 border-[#121212]"
     >
-      <div className="max-w-7xl mx-auto space-y-16">
-        {/* Header with generous spacing */}
-        <div className="max-w-3xl space-y-5">
+      <div className="max-w-7xl mx-auto space-y-8 sm:space-y-10">
+        {/* Header with balanced spacing */}
+        <div className="max-w-3xl space-y-3 sm:space-y-4">
           <div className="flex items-center gap-2.5 feature-grid-header">
             <span className="w-3.5 h-3.5 rounded-full bg-[#D02020] border-2 border-black" />
             <span className="w-3.5 h-3.5 bg-[#1040C0] border-2 border-black" />
@@ -248,11 +249,11 @@ export default function FeaturesGrid() {
             </span>
           </div>
 
-          <h2 className="feature-grid-header font-black text-4xl sm:text-6xl lg:text-7xl uppercase tracking-tighter text-[#121212] leading-[0.92]">
+          <h2 className="feature-grid-header font-black text-4xl sm:text-5xl lg:text-6xl uppercase tracking-tighter text-[#121212] leading-[0.95]">
             ENGINEERED FOR NATIONAL <span className="text-[#1040C0]">CYBER CRIME</span> ENFORCEMENT
           </h2>
 
-          <p className="feature-grid-header font-medium text-lg sm:text-xl text-gray-700 leading-relaxed">
+          <p className="feature-grid-header font-medium text-base sm:text-lg text-gray-700 leading-relaxed">
             Every heuristic, algorithm, legal notice, and telemetry event was designed from the ground up
             to eliminate the operational bottlenecks faced by State Cyber Crime Cells, I4C 1930 operators,
             and raiding officers across India.
