@@ -152,24 +152,20 @@ export default function HeroSection() {
           <div className="absolute bottom-12 left-6 w-32 h-32 bg-[#F0C020] rotate-45 opacity-30 pointer-events-none" />
           <div className="absolute top-1/2 right-12 w-24 h-24 clip-triangle bg-[#D02020] opacity-40 pointer-events-none" />
 
-          {/* Interactive WebGL Header */}
+          {/* Interactive Radar Header */}
           <div className="relative z-10 flex items-center justify-between">
             <span className="bg-[#121212] text-white text-xs font-black px-3.5 py-1.5 uppercase tracking-widest border-2 border-white shadow-[3px_3px_0px_0px_#121212]">
-              REAL-TIME WEBGL FLOW RADAR
+              REAL-TIME FORENSIC RADAR
             </span>
             <span className="text-white text-xs font-bold flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#F0C020] animate-pulse" />
-              LIVE TELEMETRY
+              <span className="w-2.5 h-2.5 rounded-full bg-[#00E676] animate-pulse" />
+              SWARM ACTIVE
             </span>
           </div>
 
-          {/* WebGL Particle Canvas */}
-          <div className="relative z-10 my-6 h-[320px] sm:h-[360px] border-4 border-[#121212] bg-[#121212] shadow-[8px_8px_0px_0px_#121212] overflow-hidden">
+          {/* Forensic Radar Canvas */}
+          <div className="relative z-10 my-6 h-[320px] sm:h-[360px] border-4 border-[#121212] bg-[#0A0D14] shadow-[8px_8px_0px_0px_#121212] overflow-hidden">
             <WebGLFlowVisualizer />
-            <div className="absolute bottom-2 left-2 right-2 bg-black/85 border border-gray-700 p-2.5 text-[10px] sm:text-xs text-gray-300 font-mono flex items-center justify-between">
-              <span>ACTIVE FLOW: TRC-20 USDT (51,724)</span>
-              <span className="text-[#F0C020] font-bold">TERMINAL: COINDCX</span>
-            </div>
           </div>
 
           {/* Live Attribution Callout */}
