@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Shield, Radio, FileText, Smartphone, Database, ChevronDown, User, Info } from "lucide-react";
+import { Shield, Radio, FileText, Smartphone, Database, ChevronDown, User, Info, Presentation } from "lucide-react";
 import EnvironmentBadge from "./EnvironmentBadge";
 
 export default function AppHeader() {
@@ -29,7 +29,14 @@ export default function AppHeader() {
           <span className="hidden md:inline">SISTER PS: <span className="text-[#F0C020]">SIH26183</span> (Fraud Exchange Identification)</span>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-gray-300 hidden sm:inline">SPONSORED BY MHA / I4C (INDIAN CYBER CRIME COORDINATION CENTRE)</span>
+          <Link
+            href="/presentation"
+            className="hidden sm:flex items-center gap-1.5 bg-[#F0C020] text-[#121212] px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wider hover:bg-yellow-400 transition-colors"
+          >
+            <Presentation className="w-3 h-3" />
+            <span>Judge Deck</span>
+          </Link>
+          <span className="text-gray-300 hidden md:inline">SPONSORED BY MHA / I4C (INDIAN CYBER CRIME COORDINATION CENTRE)</span>
           <EnvironmentBadge />
         </div>
       </div>
@@ -127,6 +134,15 @@ export default function AppHeader() {
               <Info className="w-3.5 h-3.5" />
               <span>About & Specs</span>
             </div>
+          </Link>
+
+          <Link
+            href="/presentation"
+            className="px-3.5 py-1.5 border-2 border-[#121212] font-black text-xs uppercase tracking-wider bg-[#F0C020] text-[#121212] shadow-[3px_3px_0px_0px_#121212] hover:bg-yellow-400 transition-all flex items-center gap-1.5"
+            title="Open Judge Presentation Mode"
+          >
+            <Presentation className="w-3.5 h-3.5" />
+            <span>Judge Deck</span>
           </Link>
         </nav>
 
